@@ -1,32 +1,23 @@
 package main
 
-import(
-	"net/http"
+import (
 	"fmt"
-	"log"
+	"net/http"
+	
+	"wee/wee"
 )
 
-type Engine struct{}
+func main() {
+	r := wee.New()
+	r.GET("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "URL.Path = %q\n", req.URL.Path)
+	})
 
-func (e *Engine)ServeHTTP(w http.ResponseWriter,r *http.Request){
-	switch r.URL.Path {
-	case "/":
-		fmt.Fprintf(w,"URL.Path=%s\n",r.URL.Path)
-	case "/hello":
-		for k,v := range r.Header{
-			fmt.Fprintf(w,"Header[%q]=%q\n",k,v)
+	r.GET("/hello", func(w http.ResponseWriter, req *http.Request) {
+		for k, v := range req.Header {
+			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
 		}
-	default:
-		fmt.Fprintf(w,"404 NOT FOUND: %s \n",r.URL)
-	}
-	
-}
+	})
 
-func main()  {
-	engine := new(Engine)
-	log.Fatal(http.ListenAndServe("localhost:8080",engine))
-}
-
-func handler(w http.ResponseWriter, r *http.Request){
-	
+	r.Run(":9999")
 }
