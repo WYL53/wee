@@ -24,8 +24,14 @@ func New() *Engine {
 	return engine
 }
 
+func Default() *Engine {
+	r := New()
+	r.Use(Logger(), Recovery()) // global midlleware
+	return r
+}
+
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-	engine.router.addRoute(method,pattern,handler)
+	engine.router.addRoute(method, pattern, handler)
 }
 
 // GET defines the method to add GET request
